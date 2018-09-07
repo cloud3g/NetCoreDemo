@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@section Style{
+  
+}
+
+<div class="grid" id="modeuleIndex">
+    <!--内容区域 ajax获取-->
+</div>
+
+@section Scripts{
+    <script id="view" type="text/html">
+        <table class="layui-table text-center tree">
+            <thead>
+                <tr>
+                    <th>部门名称</th>
+                    <th>部门编号</th>
+                    <th>负责人</th>
+                    <th>联系电话</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{each rows as r i}}
+                <tr>
+                    <td><input type="checkbox" />{{r.title}}</td>
+                    <td>{{r.code}}</td>
+                    {{if op=='edit'}}
+                    <td class="edit"><input type="text" name="name" value="{{r.name}}" /></td>
+                    <td class="edit"><input type="text" name="tel" value="{{r.tel}}" /></td>
+                    {{else}}
+                    <td>{{r.name}}</td>
+                    <td>{{r.tel}}</td>
+                    {{/if}}
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </script>
+    <script src="~/js/admin/module/text.js"></script>
+}

@@ -1,0 +1,36 @@
+﻿@model Blog.Models.SysUser
+
+<form class="layui-form " id="userForm" style="text-align:left">
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.RealName, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.RealName, new { @class = "layui-input", lay_verify = "required" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.LoginName, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.LoginName, new { @class = "layui-input" })
+        </div>
+    </div>
+ 
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.Password, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.Password, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">
+        </label>
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="btnSubmit">立即提交</button>
+            <button type="button" id="listBack" lay-filter="listBack" class="layui-btn layui-btn-primary">返回列表</button>
+        </div>
+
+    </div>
+</form>
+
+
+<script src="~/js/admin/sysuser/add.js"></script>

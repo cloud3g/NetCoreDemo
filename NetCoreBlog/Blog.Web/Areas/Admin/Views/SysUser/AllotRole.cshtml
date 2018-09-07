@@ -1,0 +1,29 @@
+﻿@{
+    var list = ViewBag.roleList as List<SelectListItem>;
+    list = list ?? new List<SelectListItem>();
+}
+
+<fieldset class="layui-elem-field layui-field-title">
+    <legend>为用户<span style="color:red">@ViewBag.userName</span>分配角色</legend>
+    <div class="layui-field-box">
+        <form class="layui-form " id="roleForm" >
+
+                <div class="layui-form-item">
+                    @foreach (var item in list)
+                    {
+                        <input name="ckRole" type="checkbox" value="@item.Value" title="@item.Text" @(item.Selected ? "checked" : "") />
+                    }
+                </div>
+
+         
+        </form>
+        
+    </div>
+</fieldset>
+<script type="text/javascript">
+    layui.use(['form'], function () {
+        var form = layui.form;
+        form.render();
+
+    })
+</script>

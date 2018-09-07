@@ -1,0 +1,102 @@
+﻿@using Blog.Models
+@{
+    //ViewData["Title"] = "Home Page";
+    ViewBag.navId = "navHome";
+
+    List<BlogArticle> articleList = ViewBag.articleList as List<BlogArticle>??new List<BlogArticle>();
+    List<BlogAnnouncement> announcementList = ViewBag.announcementList as List<BlogAnnouncement> ?? new List<BlogAnnouncement>();
+
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/home/index.css" />
+}
+@if (announcementList.Count > 0)
+{
+    <div class="home-tips">
+        <i style="float:left;line-height:17px;" class="fa fa-volume-up"></i>    
+        <div class="home-tips-container">
+            @for (int i = 0; i < announcementList.Count; i++)
+            {
+                string color = string.Empty;
+                string display = i == 0 ? "block" : "none";
+                switch (announcementList[i].Level)
+                {
+                    case Blog.Models.Enum.AnnouncementLevel.Normal: color = "black"; break;
+                    case Blog.Models.Enum.AnnouncementLevel.Commonly: color = "green"; break;
+                    case Blog.Models.Enum.AnnouncementLevel.Important: color = "red"; break;
+                }
+                <span style="color: @color; display: @display;">@Html.Raw(announcementList[i].Content)</span>
+            }
+        </div>
+    </div>
+}
+
+<div class="blog-main">
+    <div class="blog-main-left">
+        @if (articleList.Count > 0)
+        {
+            foreach (var item in articleList)
+            {
+                <div class="article shadow">
+                    <div class="article-left">
+                        <img src="@(string.IsNullOrWhiteSpace(item.ImgUrl)?"/images/timg.gif":item.ImgUrl)" alt="@Html.Raw(item.Title)" />
+                    </div>
+                    <div class="article-right">
+                        <div class="article-title">
+                            @if (item.Stick == true)
+                    {
+                                <span class="icon-stick">置顶</span>
+                            }
+                            @if (item.Recommend == true)
+                            {
+                                <span class="icon-tuijian">推荐</span>
+
+                            }
+                            <a href="/Article/Detail/@item.Id">@Html.Raw(item.Title)</a>
+
+
+                        </div>
+                        <div class="article-abstract">
+                            @Html.Raw(item.Remark)
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="article-footer">
+                        <span><i class="fa fa-clock-o"></i>&nbsp;&nbsp;@Html.Raw(item.UpdateTime)</span>
+                        <span class="article-author"><i class="fa fa-user"></i>&nbsp;&nbsp;@Html.Raw(item.Submitter)</span>
+                        <span><i class="fa fa-tag"></i>&nbsp;&nbsp;<a href="/Article/Category/@item.CategoryId">@Html.Raw(item.CategoryName)</a></span>
+                        <span class="article-viewinfo"><i class="fa fa-eye"></i>&nbsp;@Html.Raw(item.Traffic)</span>
+                        <span class="article-viewinfo"><i class="fa fa-commenting"></i>&nbsp;@Html.Raw(item.CommentNum)</span>
+                    </div>
+                </div>
+            }
+
+        }
+        else
+        {
+            <div class="shadow" style="text-align:center;font-size:16px;padding:40px 15px;background:#fff;margin-bottom:15px;">
+                 还未添加任何文章！
+            </div>
+
+        }
+
+    </div>
+    <div class="blog-main-right">
+        @await Component.InvokeAsync("BloggerInfo")
+        <div></div><!--占位-->
+        @await Component.InvokeAsync("HotArticle")
+        @await Component.InvokeAsync("Resource")
+ 
+        @await Component.InvokeAsync("Friendslinks")
+    </div>
+    <div class="clear"></div>
+</div>
+
+
+
+
+
+@section Scripts{
+    <script src="~/js/home/index.js"></script>
+}

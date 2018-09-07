@@ -1,0 +1,141 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div style="text-align:center">
+    <fieldset id="Console" class="layui-elem-field layui-field-title" style="display:block">
+        <legend>控制台</legend>
+        <div class="layui-field-box">
+            <div id="IndexTop">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item" style="margin:0;margin-top:15px;">
+                        <div class="layui-inline">
+                            <div class="layui-input-inline" style="width:auto">
+                                <a onclick="add()" class="layui-btn layui-btn-normal">添加模块</a>
+                                <a onclick="addAction()" class="layui-btn layui-btn-normal">添加标识</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </fieldset>
+
+    <div style="padding-top:10px" id="content" class="layui-form layui-fluid">
+        <div class="layui-row">
+            <div style="padding-bottom:50px" class="layui-col-md8" id="modeuleIndex">
+                <!--内容区域 ajax获取-->
+            </div>
+  
+            <div class="layui-col-md4" id="grid_test">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script id="view" type="text/html">
+        {{#
+        var moduleCode = {
+        Catelog:@((int)Blog.Models.Enum.ModuleCode.Catelog),
+        Index:@((int)Blog.Models.Enum.ModuleCode.Index),
+        Add:@((int)Blog.Models.Enum.ModuleCode.Add),
+        Delte: @((int)Blog.Models.Enum.ModuleCode.Delete),
+        Edit: @((int)Blog.Models.Enum.ModuleCode.Edit),
+        Query: @((int)Blog.Models.Enum.ModuleCode.Query),
+        };
+        var moduleType={
+        Catelog:@((int)Blog.Models.Enum.ModuleType.Catelog),
+
+        Page:@((int)Blog.Models.Enum.ModuleType.Page),
+        };
+        }}
+        {{# var  typeInit=function(type){
+                           switch(type){
+                             case moduleType.Catelog: return '<span class="layui-badge layui-bg-orange">目录</span>' ;breack;
+                            case moduleType.Page: return '<span class="layui-badge layui-bg-green">页面</span>' ;breack;
+                            default:return '未知类型';
+                      }
+
+                },textInit=function(type){
+                     return type==null?"":type;
+
+                },checkInit=function(type,id,title){
+                    return type?"<input type='checkbox' title='"+title+"' lay-filter='isMenu' data-id='"+id+"' checked/>":"<input type='checkbox' title='"+title+"'  lay-filter='isMenu' data-id='"+id+"' />";
+                };
+
+        }}
+
+        <table class="layui-table">
+
+            <thead>
+                <tr>
+                    <th>模块名称</th>
+                    <th>模块类型</th>
+                    <th>Area</th>
+                    <th>Controller</th>
+                    <th>是否菜单</th>
+                    <th>排序</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{# layui.each(d.rows,function(index,r){}}
+                <tr>
+                    <td>{{r.Name}}</td>
+                    <td>{{typeInit(r.Type)}}</td>
+                    <td>{{textInit(r.AreaName)}}</td>
+                    <td>{{textInit(r.ControllerName)}}</td>
+                    <td>{{checkInit(r.IsSysMenu,r.id,"菜单")}}</td>
+                    <td>{{r.Sort}}</td>
+                    <td>
+                        <button class="layui-btn layui-btn-small layui-btn-normal" onclick="edit({{r.id}})"><i class="layui-icon">&#xe642;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-danger" onclick="del({{r.id}})"><i class="layui-icon">&#xe640;</i></button>
+                    </td>
+                </tr>
+                {{# }); }}
+            </tbody>
+        </table>
+    </script>
+    <script type="text/html" id="grid">
+        {{#
+            var checkInit=function(type,id,title){
+                    return type?"<input type='checkbox' title='"+title+"' lay-filter='actionEnable' data-id='"+id+"' checked/>":"<input type='checkbox' title='"+title+"'  lay-filter='actionEnable' data-id='"+id+"' />";
+                };
+
+}}
+        <table class="layui-table text-center">
+            <thead>
+                <tr>
+
+                    <th>名称</th>
+                    <th>唯一标识</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{# layui.each(d.rows,function(index,r){}}
+                <tr>
+
+                    <td>{{r.Name}}</td>
+                    <td>{{r.Code}}</td>
+                    <td>{{checkInit(r.Enable,r.Id,"启用")}}</td>
+                    <td>
+                        <button class="layui-btn layui-btn-small layui-btn-normal" onclick="editAction({{r.Id}})"><i class="layui-icon">&#xe642;</i></button>
+                        <button class="layui-btn layui-btn-small layui-btn-danger" onclick="delAction({{r.Id}})"><i class="layui-icon">&#xe640;</i></button>
+
+                    </td>
+                </tr>
+                {{# }); }}
+            </tbody>
+
+        </table>
+    </script>
+    <script src="~/js/admin/module/index.js"></script>
+}

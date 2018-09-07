@@ -1,0 +1,86 @@
+﻿@model Dictionary<int, List<IGrouping<int, Blog.Models.TimeLine>>>
+@using Blog.Models
+@using Blog.Common
+@{
+    ViewData["Title"] = "TimeLine";
+    ViewBag.navId = "navDiary";
+}
+@section Styles{
+    <link  rel="stylesheet" href="~/css/timeline.css"/>
+}
+<div class="blog-body">
+    <div class="blog-container">
+        <blockquote class="layui-elem-quote sitemap layui-breadcrumb shadow">
+
+
+            <a href="/" title="网站首页">网站首页</a>
+
+            <a href="/Diary" title="点点滴滴">点点滴滴</a>
+
+            <a><cite>时光轴</cite></a>
+
+        </blockquote>
+        <div class="blog-main">
+            <div class="child-nav shadow">
+                <span onclick="javascript: location.href = '/Diary/TimeLine';" class="child-nav-btn child-nav-btn-this">时光轴</span>
+
+            </div>
+            <div class="timeline-box shadow">
+                <div class="timeline-main">
+                    <h1><i class="fa fa-clock-o"></i>时光轴<span> —— 记录生活点点滴滴</span></h1>
+                    <div class="timeline-line"></div>
+                    @foreach (var yeahItem in Model)
+                    {
+                        <div class="timeline-year">
+                            <h2><a class="yearToggle" href="javascript:;">@(yeahItem.Key)年</a><i class="fa fa-caret-down fa-fw"></i></h2>
+                            @foreach (var mitem in yeahItem.Value)
+                            {
+                                <div class="timeline-month">
+                                    <h3 class=" animated fadeInLeft"><a class="monthToggle" href="javascript:;">@(mitem.Key)月</a><i class="fa fa-caret-down fa-fw"></i></h3>
+                                    <ul>
+                                        @foreach (var item in mitem)
+                                        {
+                                            <li class=" ">
+                                                <div class="h4  animated fadeInLeft">
+                                                    <p class="date">@(item.CreateTime.Value.ToString("MM月dd日 HH:mm"))</p>
+                                                </div>
+                                                <p class="dot-circle animated "><i class="fa fa-dot-circle-o"></i></p>
+                                                <div class="timelineContent animated fadeInRight">@item.Content</div>
+                                                <div class="clear"></div>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <h1 style="padding-top:4px;padding-bottom:2px;margin-top:40px;"><i class="fa fa-hourglass-end"></i>THE END</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+<script>
+    layui.use('jquery', function () {
+        var $ = layui.jquery;
+
+        $(function () {
+            $('.monthToggle').click(function () {
+                $(this).parent('h3').siblings('ul').slideToggle('slow');
+                $(this).siblings('i').toggleClass('fa-caret-down fa-caret-right');
+            });
+            $('.yearToggle').click(function () {
+                $(this).parent('h2').siblings('.timeline-month').slideToggle('slow');
+                $(this).siblings('i').toggleClass('fa-caret-down fa-caret-right');
+            });
+        });
+    });
+    </script>
+
+
+}

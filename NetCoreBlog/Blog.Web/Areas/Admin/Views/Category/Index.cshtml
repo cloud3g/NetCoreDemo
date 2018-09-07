@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+
+
+<div style="text-align:center">
+
+    <fieldset id="Console" class="layui-elem-field layui-field-title" style="display:block;">
+        <legend>控制台</legend>
+        <div class="layui-field-box">
+            <div id="IndexTop">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item" style="margin:0;margin-top:15px;">
+
+                        <div class="layui-inline">
+                            <div class="layui-input-inline" style="width:auto">
+                                <a lay-filter="add" class="layui-btn layui-btn-normal">添加</a>
+                                <a  class="layui-btn layui-btn-normal"  lay-filter="edit">编辑</a>
+                                <a class="layui-btn layui-btn-danger" lay-filter="delete">删除</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset   class="layui-elem-field layui-field-title sys-list-field">
+        <legend id="BoxTitle">栏目列表</legend>
+        <div  class="layui-field-box">
+            
+            <div style="padding-top:50px" id="List" class="layui-form">
+                <!--内容区域 ajax获取-->
+
+            </div>
+        </div>
+    </fieldset>
+</div>
+@section Scripts{
+
+    <script id="view" type="text/html">
+        {{# 
+            var categoryType = {
+                General:@((int)Blog.Models.Enum.BlogCategoryType.General),
+                Page:@((int)Blog.Models.Enum.BlogCategoryType.Page),
+                Link: @((int)Blog.Models.Enum.BlogCategoryType.Link),
+            };  
+        }}
+                                {{#
+            var typeInit = function(type){
+                if(type==categoryType.General){
+                         return '常规栏目';
+                    }else if(type==categoryType.Page){
+                          return '单页栏目';
+                    }else if(type==categoryType.Link){
+                         return '链接栏目';
+                    }else{
+                        return '未知类型';
+                    }
+            },textInit=function(value){
+                if(value){
+                    return value;
+                }else{
+                    return "";
+                }
+            },cbInit=function(value){
+                 return value?"checked":"";
+            },imgInit=function(value){
+                if(value){
+                    return '<img src="'+value+'" />';
+                }else{
+                    return '';
+                }
+            };
+        }}
+
+        <table class="layui-table">
+               
+            <thead>
+                <tr>
+                    <th width="20%">栏目名称</th>
+                    <th width="20%">栏目类型</th>
+                    <th width="20%">图片</th>
+                    <th width="10%">是否启用</th>
+                    <th width="10%">首页显示</th>
+                    <th width="20%">备注</th>        
+                </tr>
+            </thead>
+            <tbody>
+                {{# layui.each(d.rows,function(index,r){ }}
+                <tr>
+                    <td>{{r.name}}</td>
+                    <td>
+                        {{ typeInit(r.type) }}
+                    </td>
+                    <td style="text-align:center">
+                        {{ imgInit(r.imgUrl)}}
+                    </td>
+                    <td style="text-align:center"><input lay-filter="enable" type="checkbox" title="是" data-id="{{r.id}}" {{cbInit(r.enable)}}/></td>
+                    <td style="text-align:center"><input lay-filter="isNav" type="checkbox" title="是" data-id="{{r.id}}"  {{cbInit(r.isNav)}}/></td>
+                    <td>{{ textInit(r.remark)}}</td>
+                </tr>
+                {{# }); }}
+            </tbody>
+        </table>
+    </script>
+
+    <script type="text/javascript" src="~/js/admin/category/index.js"></script>
+}

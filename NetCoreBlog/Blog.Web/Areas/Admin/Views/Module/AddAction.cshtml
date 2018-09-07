@@ -1,0 +1,36 @@
+﻿@model Blog.Models.SysModuleAction
+
+<div style="padding:10px">
+    <form class="layui-form" id="moduleAactionForm" style="text-align:left" action="">
+        <input type="hidden" value="@ViewBag.moduleId" name="ModuleId" id="ModuleId" />
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+               @Html.TextBoxFor(model=>model.Name, new { @class = "layui-input" })
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">唯一标识</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Code, new { @class = "layui-input" })
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选项</label>
+            <div class="layui-input-block">
+                @Html.CheckBoxFor(model => model.Enable, new { title = "启用" })
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="btnAddModuleAction">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/js/admin/module/addaction.js"></script>

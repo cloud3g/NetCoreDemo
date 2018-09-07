@@ -1,0 +1,35 @@
+﻿@model Blog.Models.BlogAnnouncement
+<form class="layui-form" action="">
+    @Html.HiddenFor(model=>model.Id)
+    @Html.HiddenFor(model=>model.CreateTime)
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <textarea name="Content"  id="announcementContent" lay-verify="announcementContent" style="display: none;">@Html.Raw(Model.Content)</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公告级别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="Level" value="0" title="普通" @(Model.Level== Blog.Models.Enum.AnnouncementLevel.Normal?"checked":"")>
+            <input type="radio" name="Level" value="1" title="一般"  @(Model.Level== Blog.Models.Enum.AnnouncementLevel.Commonly?"checked":"")>
+            <input type="radio" name="Level" value="2" title="重要"  @(Model.Level== Blog.Models.Enum.AnnouncementLevel.Important?"checked":"")>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">启用</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Enable" lay-skin="switch" lay-text="ON|OFF" value="true" @(Model.Enable== true?"checked":"")>
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formAnnouncement">立即提交</button>
+        </div>
+    </div>
+</form>
+@section Scripts{
+<script src="~/js/admin/announcement/edit.js"></script>
+}

@@ -1,0 +1,172 @@
+﻿@model Blog.Web.Models.ArticleViewModel
+@using Blog.Models
+@{
+    ViewData["Title"] = "Home Page";
+    ViewBag.navId = "navArticle";
+}
+
+@section Styles{
+    <style>
+        .search-keywords,
+        .search-submit {
+            display: none;
+        }
+
+        /* 小屏幕（平板，大于等于 768px） */
+        @@media (min-width: 768px) {
+        }
+
+        /* 中等屏幕（桌面显示器，大于等于 992px） */
+        @@media (min-width: 992px) {
+            .blog-search {
+                margin-bottom: 15px;
+            }
+
+            .search-keywords,
+            .search-submit {
+                display: inline-block;
+            }
+
+            .search-keywords {
+                width: 85%;
+                float: left;
+            }
+
+                .search-keywords > input {
+                    border-radius: 0;
+                }
+
+            .search-submit {
+                width: 14%;
+                float: right;
+            }
+
+                .search-submit > .search-btn {
+                    display: block;
+                    width: 100%;
+                    height: 36px;
+                    background: #fff;
+                    cursor: pointer;
+                    float: right;
+                    border-radius: 1px;
+                    border: 1px solid #e2e2e2;
+                }
+
+                    .search-submit > .search-btn:hover {
+                        border: 1px solid #d2d2d2;
+                    }
+
+                    .search-submit > .search-btn i {
+                        width: 13px;
+                        line-height: 38px;
+                        display: block;
+                        margin: 0 auto;
+                    }
+        }
+
+        /* 大屏幕（大桌面显示器，大于等于 1200px） */
+        @@media (min-width: 1200px) {
+        }
+    </style>
+}
+<div class="blog-body">
+    <div class="blog-container">
+        <blockquote class="layui-elem-quote sitemap layui-breadcrumb shadow">
+            <a href="home.html" title="网站首页">网站首页</a>
+            <a><cite>文章专栏</cite></a>
+        </blockquote>
+        <div class="blog-main">
+            <input id="hidCategoryId" type="hidden" name="hidCategoryId" value="@ViewBag.CategoryId" />
+            <input id="hidKeyWords" type="hidden" name="hidKeyWords" value="@ViewBag.KeyWords" />
+            <div class="blog-main-left">
+                @if (string.IsNullOrEmpty(Model.Msg))
+                {
+                    foreach (var item in Model.Articles)
+                    {
+                        <div class="article shadow">
+                            <div class="article-left">
+                                <img src="@(string.IsNullOrEmpty(item.ImgUrl)?"/images/timg.gif":item.ImgUrl)" alt="@Html.Raw(item.Title)" />
+                            </div>
+                            <div class="article-right">
+                                <div class="article-title">
+                                    <a href="/Article/Detail/@item.Id">@Html.Raw(item.Title)</a>
+                                </div>
+                                <div class="article-abstract">
+                                    @Html.Raw(item.Remark)
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="article-footer">
+                                <span><i class="fa fa-clock-o"></i>&nbsp;&nbsp;@Html.Raw(item.UpdateTime)</span>
+                                <span class="article-author"><i class="fa fa-user"></i>&nbsp;&nbsp;@Html.Raw(item.Submitter)</span>
+                                <span><i class="fa fa-tag"></i>&nbsp;&nbsp;<a href="#">@Html.Raw(item.CategoryName)</a></span>
+                                <span class="article-viewinfo"><i class="fa fa-eye"></i>&nbsp;@Html.Raw(item.Traffic)</span>
+                                <span class="article-viewinfo"><i class="fa fa-commenting"></i>&nbsp;@Html.Raw(item.CommentNum)</span>
+                            </div>
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    <div class="shadow" style="text-align:center;font-size:16px;padding:40px 15px;background:#fff;margin-bottom:15px;">
+                        @Html.Raw(Model.Msg)
+                    </div>
+                    foreach (var item in Model.Articles)
+                    {
+                        <div class="article shadow">
+                            <div class="article-left">
+                                <img src="@(string.IsNullOrEmpty(item.ImgUrl)?"/images/timg.gif":item.ImgUrl)" alt="@Html.Raw(item.Title)" />
+                            </div>
+                            <div class="article-right">
+                                <div class="article-title">
+                                    <a href="/Article/Detail/@item.Id">@Html.Raw(item.Title)</a>
+                                </div>
+                                <div class="article-abstract">
+                                    @Html.Raw(item.Remark)
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                            <div class="article-footer">
+                                <span><i class="fa fa-clock-o"></i>&nbsp;&nbsp;@Html.Raw(item.UpdateTime)</span>
+                                <span class="article-author"><i class="fa fa-user"></i>&nbsp;&nbsp;@Html.Raw(item.Submitter)</span>
+                                <span><i class="fa fa-tag"></i>&nbsp;&nbsp;<a href="#">@Html.Raw(item.CategoryName)</a></span>
+                                <span class="article-viewinfo"><i class="fa fa-eye"></i>&nbsp;@Html.Raw(item.CommentNum)</span>
+                                <span class="article-viewinfo"><i class="fa fa-commenting"></i>&nbsp;@Html.Raw(item.Traffic)</span>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="blog-main-right">
+                <div class="blog-search">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <div class="search-keywords  shadow">
+                                <input type="text" id="keywords" name="keywords" lay-verify="required" placeholder="输入关键词搜索" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="search-submit  shadow">
+                                <a class="search-btn"   lay-submit="formSearch" lay-filter="formSearch"><i class="fa fa-search"></i></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                @await Component.InvokeAsync("nav")
+                @await Component.InvokeAsync("Recomment")
+                @await Component.InvokeAsync("LookAround")
+
+                <!--右边悬浮 平板或手机设备显示-->
+                <div class="category-toggle"><i class="fa fa-chevron-left"></i></div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+
+<!--遮罩-->
+<div class="blog-mask animated layui-hide"></div>
+
+@section Scripts{
+    <script src="~/js/article/index.js"></script>
+}

@@ -1,0 +1,20 @@
+﻿@model Blog.Models.TimeLine
+
+<form class="layui-form " id="timelineForm" style="text-align:left">
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+
+            @Html.TextAreaFor(model => model.Content, new { @class = "layui-textarea" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+            <button type="button" id="listBack" lay-filter="listBack" class="layui-btn layui-btn-primary">返回列表</button>
+        </div>
+    </div>
+</form>
+
+
+<script src="~/js/admin/timeline/add.js"></script>

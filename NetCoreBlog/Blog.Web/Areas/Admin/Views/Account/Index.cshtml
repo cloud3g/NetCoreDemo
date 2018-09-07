@@ -1,0 +1,155 @@
+﻿
+@using Microsoft.Extensions.Options
+@using Blog.Common
+@inject IWritableOptions<BlogSettingsViewModel> AppSettings
+@{
+    Layout = null;
+    var blogSettings = AppSettings.Value;
+}
+
+
+
+
+<!DOCTYPE html>
+<!--{49cdd9d3-a473-4aef-8190-5dc5bf7b3984}-->
+<html>
+<head>
+    <title>@Html.Raw(blogSettings.Title)-后台管理</title>
+    <link rel="shortcut icon" href="@(string.IsNullOrEmpty(blogSettings.Logo)?"/favicon.ico":blogSettings.Logo)" type="image/x-icon">
+    <link href="~/lib/layui/css/layui.css" rel="stylesheet" />
+    <link href="~/css/admin/account/loginindex.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="mask"></div>
+    <div class="main">
+        <h1><span style="font-size: 84px;">B</span><span style="font-size:30px;">log</span></h1>
+        <p id="time"></p>
+        <div onclick="javascript:login()" class="enter">
+            Please&nbsp;&nbsp;Click&nbsp;&nbsp;Enter
+        </div>
+    </div>
+    <script src="~/lib/layui/layui.js"></script>
+    <script type="text/javascript">
+        layui.use(['element', 'layer', 'form'], function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            //自定义验证
+            form.verify({
+                passWord: [/^[\S]{6,12}$/, '密码必须6到12位'],
+                account: function (value) {
+                    if (value.length <= 0 || value.length > 10) {
+                        return "账号必须1到10位"
+                    }
+                    var reg = /^[a-zA-Z0-9]*$/;
+                    if (!reg.test(value)) {
+                        return "账号只能为英文或数字";
+                    }
+                },
+                result_response: function (value) {
+                    if (value.length < 1) {
+                        return '请点击人机识别验证';
+                    }
+                },
+            });
+            //监听登陆提交
+            form.on('submit(login)', function (data) {
+                var index = layer.load(1);
+                $.ajax({
+                  
+                    type: 'post',
+                    url: '/admin/account/login',
+                    data: $(".layui-form").serialize(),
+                    success: function (res) {
+                        layer.close(index);
+                        if (res.Code == 1) {
+                            layer.msg(res.Message, { icon: 6 });
+                            layer.closeAll('page');
+                            location.href = "/Admin/Home";
+                        } else {
+                            layer.msg(res.Message, { icon: 5 });
+                        }
+                    },
+                    error: function (outResult) {
+                        layer.close(index);
+                        layer.msg("请求异常", { icon: 2 });
+                    }
+                });
+                return false;
+            });
+            $('body').keydown(function (e) {
+                if (e.keyCode == 13) {
+                    if ($('#layer-login').length <= 0) {
+                        login();
+                    } else {
+                        $('button[lay-filter=login]').click();
+                    }
+                }
+            });
+        });
+        function login() {
+            var $ = layui.jquery;
+            $.get('/Admin/account/Login', {}, function (str) {
+                layer.open({
+                    id: 'layer-login',
+                    type: 1,
+                    title: false,
+                    shade: 0.4,
+                    shadeClose: true,
+                    area: ['480px', '270px'],
+                    closeBtn: 0,
+                    anim: 1,
+                    skin: 'pm-layer-login',
+                    content: str
+                });
+                layui.form.render('checkbox');
+            });
+
+            //layer.open({
+            //    id: 'layer-login',
+            //    type: 2,
+            //    title: false,
+            //    shade: 0.4,
+            //    shadeClose: true,
+            //    area: ['480px', '270px'],
+            //    closeBtn: 0,
+            //    anim: 1,
+            //    skin: 'pm-layer-login',
+            //    content: '/Admin/account/Login'
+            //});
+        }
+    </script>
+    <script type="text/javascript">
+        function systemTime() {
+            //获取系统时间。
+            var dateTime = new Date();
+            var year = dateTime.getFullYear();
+            var month = dateTime.getMonth() + 1;
+            var day = dateTime.getDate();
+            var hh = dateTime.getHours();
+            var mm = dateTime.getMinutes();
+            var ss = dateTime.getSeconds();
+
+            //分秒时间是一位数字，在数字前补0。
+            mm = extra(mm);
+            ss = extra(ss);
+
+            //将时间显示到ID为time的位置，时间格式形如：19:18:02
+            document.getElementById("time").innerHTML = year + "-" + month + "-" + day + " " + hh + ":" + mm + ":" + ss;
+            //每隔1000ms执行方法systemTime()。
+            setTimeout("systemTime()", 1000);
+        }
+
+        //补位函数。
+        function extra(x) {
+            //如果传入数字小于10，数字前补一位0。
+            if (x < 10) {
+                return "0" + x;
+            }
+            else {
+                return x;
+            }
+        }
+        systemTime();
+    </script>
+</body>
+</html>

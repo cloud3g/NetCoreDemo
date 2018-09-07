@@ -1,0 +1,100 @@
+﻿@model Blog.Models.WC_OfficalAccounts
+
+<form class="layui-form " id="officialForm" style="text-align:left">
+    @Html.HiddenFor(model=>model.Id)
+    @Html.HiddenFor(model=>model.CreateTime)
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.OfficalId, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.OfficalId, new { @class = "layui-input", lay_verify = "required" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.OfficalName, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.OfficalName, new { @class = "layui-input", lay_verify = "required" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.Label("categoryName", "类别", new { @class = "layui-form-label" })
+        <div class="layui-input-inline">
+            @Html.DropDownListFor(model => model.Category,Html.GetEnumSelectList(typeof(Blog.Models.WC_OfficalAccountType)), new { lay_filter = "Category" })
+           
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.OfficalCode, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.OfficalCode, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.OfficalKey, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.OfficalKey, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.ApiUrl, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.ApiUrl, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.Token, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.Token, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.AppId, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.AppId, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.AppSecret, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.AppSecret, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.AccessToken, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+    
+            @Html.TextBoxFor(model => model.AccessToken, new { @class = "layui-input" , @readonly = "readonly", placeholder = "自动生成" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.Remark, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.Remark, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选项</label>
+        <div class="layui-input-inline">
+     
+            @Html.CheckBoxFor(model => model.Enable,new { title="启用"})
+        </div>
+     
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">
+        </label>
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="btnSubmit">立即提交</button>
+            <button type="button" id="listBack" lay-filter="listBack" class="layui-btn layui-btn-primary">返回列表</button>
+        </div>
+
+    </div>
+</form>
+
+ 
+<script src="~/js/admin/officialaccounts/edit.js"></script>

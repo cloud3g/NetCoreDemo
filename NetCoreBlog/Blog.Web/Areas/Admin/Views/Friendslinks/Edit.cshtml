@@ -1,0 +1,52 @@
+﻿@model Blog.Models.Friendslinks
+<div style="padding:10px">
+    <form class="layui-form layui-form-pane" action="">
+        @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.CreateTime)
+        <div class="layui-form-item">
+            <label class="layui-form-label">站点名称</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.WebName, new { @class = "layui-input", placeholder = "请输入站点名称", lay_verify = "required" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">站点链接</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Url, new { @class = "layui-input", lay_verify = "url", placeholder = "请输入站点链接http://开头" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">网站logo</label>
+            <div class="layui-input-inline">
+                @Html.TextBoxFor(model => model.Logo, new { @class = "layui-input" })
+            </div>
+            <div style="float:left">
+                <img id="img" src="@(string.IsNullOrEmpty(Model.Logo)?"":Model.Logo)" />
+            </div>
+            <div style="float:left">
+                <button type="button" class="layui-btn" id="upImg">
+                    <i class="layui-icon">&#xe67c;</i>上传图片
+                </button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">启用</label>
+            <div class="layui-input-block">
+                @Html.HiddenFor(model => model.Enable)
+                <input type="checkbox" lay-filter="enable" lay-skin="switch" lay-text="ON|OFF" @(Model.Enable ? "checked" : "")>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Sort, new { @class = "layui-input ", lay_verify = "number" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-submit="" lay-filter="*">提交</button>
+        </div>
+    </form>
+</div>
+@section Scripts{
+    <script src="~/js/admin/friendslinks/edit.js"></script>
+}

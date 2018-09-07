@@ -1,0 +1,109 @@
+﻿@using Microsoft.Extensions.Options
+@using Blog.Common
+@inject IWritableOptions<BlogSettingsViewModel> AppSettings
+@{ 
+    var blogSettings = AppSettings.Value;
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>@Html.Raw(blogSettings.Title)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="@Html.Raw(blogSettings.Keywords)">
+    <meta name="description" content="@Html.Raw(blogSettings.Description)">
+    <link rel="shortcut icon" href="@(string.IsNullOrEmpty(blogSettings.Logo)?"/favicon.ico":blogSettings.Logo)" type="image/x-icon">
+    <link rel="stylesheet" href="~/css/animate.min.css"/>
+    <link rel="stylesheet" href="~/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="~/fly/css/global.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    @if (ViewBag.Full == "true")
+    {
+        <link rel="stylesheet" href="~/fly/css/full.css" />
+
+    }
+    @RenderSection("Styles",false)
+    <!--pace.js-->
+    <script data-pace-options='{ "ajax": false ,"eventLag": false}' src="~/js/pace.min.js"></script>
+
+</head>
+<body>
+
+    <nav class="blog-nav layui-header header">
+        <div class="blog-container main">
+            <div class="nav-user">
+                <p class="out-login">
+                    <a href="" onclick="layer.msg('备案下不来'); return false" class="iconfont icon-qq" title="QQ登入"></a>
+                    <a href="" onclick="layer.msg('备案下不来'); return false" class="iconfont icon-weibo" title="微博登入"></a>
+                </p>
+
+            </div>
+          
+            <a class="blog-logo" href="/" title="Fly">@blogSettings.LogoText</a>
+            <div class="nav" style="font-size:10px">
+                <a id="navHome" href="/">
+                    <i class="fa fa-home"></i>网站首页
+                </a>
+                <a id="navArticle" href="/Article">
+                    <i class="fa fa-file-text"></i>文章专栏
+                </a>
+                <a id="navResource" href="/resource">
+                    <i class="fa fa-tags"></i>资源分享
+                </a>
+                <a id="navDiary" href="/Diary/timeline"><i class="fa fa-hourglass-half"></i>&nbsp;点点滴滴</a>
+                <a id="navAbout" href="/about"><i class="fa fa-info"></i>&nbsp;关于本站</a>
+            </div>
+            <a class="blog-navicon" href="javascript:;">
+                <i class="fa fa-navicon"></i>
+            </a>
+        </div>
+    </nav>
+
+
+    
+    <div class="main layui-clear">
+        
+       @RenderBody()
+    </div>
+    <!--侧边导航-->
+    <ul class="layui-nav layui-nav-tree layui-nav-side blog-nav-left layui-hide" lay-filter="nav">
+        <li class="layui-nav-item  layui-this">
+            <a href="/"><i class="fa fa-home fa-fw"></i>&nbsp;网站首页</a>
+        </li>
+        <li class="layui-nav-item ">
+            <a href="/Article"><i class="fa fa-file-text fa-fw"></i>&nbsp;文章专栏</a>
+        </li>
+        <li class="layui-nav-item ">
+            <a href="/Resource"><i class="fa fa-tags fa-fw"></i>&nbsp;资源分享</a>
+        </li>
+        <li class="layui-nav-item ">
+            <a href="/Diary/timeline"><i class="fa fa-road fa-fw"></i>&nbsp;点点滴滴</a>
+        </li>
+        <li class="layui-nav-item ">
+            <a href="/About"><i class="fa fa-info fa-fw"></i>&nbsp;关于本站</a>
+        </li>
+    </ul>
+
+    <!--遮罩-->
+    <div class="blog-mask animated layui-hide"></div>
+
+    <div class="footer">
+        <p><a href="http://fly.layui.com/">Fly社区</a> 2017 &copy; <a href="http://www.layui.com/">layui.com</a></p>
+        <p>
+            <a href="http://fly.layui.com/auth/get" target="_blank">产品授权</a>
+            <a href="http://fly.layui.com/jie/8157.html" target="_blank">获取Fly社区模版</a>
+            <a href="http://fly.layui.com/jie/2461.html" target="_blank">微信公众号</a>
+        </p>
+        @blogSettings.Statistics
+    </div>
+    <script src="~/lib/layui/layui.js"></script>
+    <script>
+        var navId='@ViewBag.navId';
+    </script>
+   <script src="~/js/global.js"></script>
+    @RenderSection("Scripts",false)
+
+</body>
+</html>

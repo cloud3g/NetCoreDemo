@@ -1,0 +1,68 @@
+﻿[
+
+  {
+    "title": "博客管理",
+    "icon": "",
+    "href": "",
+    "spread": false,
+    "children": [
+      {
+        "title": "文章管理",
+        "icon": "",
+        "href": "/admin/blogmanager",
+        "spread": false
+      },
+      {
+        "title": "栏目管理",
+        "icon": "",
+        "href": "/admin/category",
+        "spread": false
+      },
+      {
+        "title": "资源管理",
+        "icon": "",
+        "href": "/admin/resource",
+        "spread": false
+      },
+      {
+        "title": "时光轴管理",
+        "icon": "",
+        "href": "/admin/timeline",
+        "spread": false
+      }
+    ]
+  },
+  {
+    "title": "网站设置",
+    "icon": "",
+    "href": "",
+    "spread": false,
+    "children": [
+      {
+        "title": "基本设置",
+        "icon": "",
+        "href": "/admin/BlogSettings",
+        "spread": false
+      },
+      {
+        "title": "博主信息",
+        "icon": "",
+        "href": "/admin/bloggerinfo",
+        "spread": false
+      },
+      {
+        "title": "网站公告",
+        "icon": "",
+        "href": "/admin/Announcement",
+        "spread": false
+      },
+
+      {
+        "title": "友情链接",
+        "icon": "",
+        "href": "/admin/Friendslinks",
+        "spread": false
+      }
+    ]
+  }
+]

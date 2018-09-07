@@ -1,0 +1,10 @@
+﻿@model List<Blog.Models.Friendslinks>
+<div class="blog-module shadow">
+    <div class="blog-module-title">友情链接</div>
+    <ul class="blogroll">
+        @foreach (var item in Model)
+        {
+            <li><a target="_blank" href="@item.Url" title="@item.WebName">@item.WebName</a></li>
+        }
+    </ul>
+</div>

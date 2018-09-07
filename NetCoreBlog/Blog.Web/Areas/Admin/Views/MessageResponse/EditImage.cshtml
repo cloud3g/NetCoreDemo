@@ -1,0 +1,127 @@
+﻿@model Blog.Models.WC_MessageResponse
+
+<div style="padding:20px">
+    <form class="layui-form " id="imgeForm">
+        @Html.HiddenFor(model=>model.Id)
+        @Html.HiddenFor(model=>model.OfficalAccountId)
+        @Html.HiddenFor(model=>model.CreateTime)
+        @Html.HiddenFor(model=>model.UpdateTime)
+        @Html.HiddenFor(model=>model.Enable)
+ 
+        <input type="hidden" value="@Model.MessageRule" id="MessageRule" name="MessageRule" />
+        <input type="hidden" value="@Model.Category" id="Category" name="Category" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input name="TextContent" value="@Model.TextContent" required  class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">关键词</label>
+            <div class="layui-input-block">
+                <input name="MatchKey" value="@Model.MatchKey" required class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item" style="position:relative;">
+            <label class="layui-form-label">封面</label>
+            <div class="layui-input-inline">
+                <input type="hidden" value="@Model.ImgTextUrl" id="ImgTextUrl" name="ImgTextUrl"  />
+                <img id="img" style="width:100%;height:auto;border:1px solid #ddd" src="@Model.ImgTextUrl" />
+            </div>
+            <div class="layui-input-inline" style="position:absolute;bottom:0;">
+                <div>
+                    <button type="button" id="upImg" class="layui-btn layui-btn-primary">
+                        <i class="layui-icon">&#xe608;</i>点击上传
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block layui-form-text">
+                <textarea name="ImgTextContext" class="layui-textarea">@Model.ImgTextContext</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-block">
+                <input name="ImgTextLink" value="@Model.ImgTextLink" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input name="Sort" value="@Model.Sort" required class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+            </label>
+            <div class="layui-input-block">
+                <button lay-submit class='layui-btn layui-btn-primary' lay-filter='btnImgSave'>提交保存</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+ <script type="text/javascript">
+     layui.use(['form', 'upload','jquery'], function () {
+         var form = layui.form, upload = layui.upload, $ = layui.$;
+
+         var uploadInst = upload.render({
+             elem: '#upImg' //绑定元素
+             , url: '/api/Pictures' //上传接口
+             , method: 'post'
+             , exts: 'jpg|png|gif|bmp|jpeg'
+             , auto: true
+             , data: { directoryName: "wechat", Percent: 0.3 }
+             , before: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                 layer.load(); //上传loading
+             }
+             , done: function (res) {
+                 //上传完毕回调
+                 if (res.code == 0) {
+
+                     $('#ImgTextUrl').val(res.data.src);
+                     $('#img').attr('src', res.data.src);
+                 }
+                 layer.closeAll('loading'); //关闭loading
+             }
+             , error: function () {
+                 //请求异常回调
+                 layer.closeAll('loading'); //关闭loading
+             }
+         });
+         form.on("submit(btnImgSave)", function (data) {
+            
+             $.ajax({
+                 url: '/admin/messageresponse/edit',
+                 type: 'post',
+                 data: $('#imgeForm').serialize(),
+                 success: function (res) {
+                     console.log(res.Code==1)
+                     if (res.Code==1) {
+                         getImageMatchKeyContent(matchKeyPageIndex, matchKeyPageSize, Category.Image);
+                         getImageContent();
+                         layer.closeAll();
+                     } else {
+                         layer.msg(res.Message);
+                         layer.closeAll();
+                     }
+
+                 },
+                 error: function (e) {
+                     layer.msg(e.responseText);
+
+                 }
+
+             });
+             return false;
+         });
+         
+     })
+ </script>

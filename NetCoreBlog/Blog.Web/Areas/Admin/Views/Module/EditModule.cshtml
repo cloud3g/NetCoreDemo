@@ -1,0 +1,73 @@
+﻿@model Blog.Models.SysModule
+
+<div style="padding:10px">
+    <form class="layui-form" id="moduleForm" style="text-align:left" action="">
+        @Html.HiddenFor(model=>model.Id)
+        @Html.HiddenFor(model=>model.CreateTime) 
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块类型</label>
+            <div class="layui-input-block">
+                @Html.DropDownListFor(model => model.Type, Html.GetEnumSelectList(typeof(Blog.Models.Enum.ModuleType)), new { lay_filter = "type" })
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">隶属模块</label>
+            <div class="layui-input-block">
+                <select id="Pid" name="Pid"></select>
+                @*@Html.DropDownListFor(model=>model.Pid, ViewBag.selectList as List<SelectListItem>,new { layui_filter="pid"})*@
+                <input type="hidden" id="selectPid" value="@Model.Pid" />
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块名称</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Name, new { @class = "layui-input" })
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">Area</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.AreaName, new { @class = "layui-input" })
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">Controller</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.ControllerName, new { @class = "layui-input" })
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">选项</label>
+            <div class="layui-input-block">
+                @Html.CheckBoxFor(model => model.IsSysMenu, new { title = "菜单" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Sort, new { @class = "layui-input", placeholder = "数字越小排越前", lay_verify = "required" })
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="btnEditModule">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+     var moduleType={
+        Catelog:@((int)Blog.Models.Enum.ModuleType.Catelog),
+        Page:@((int)Blog.Models.Enum.ModuleType.Page),
+        };
+</script>
+<script src="~/js/admin/module/edit.js"></script>

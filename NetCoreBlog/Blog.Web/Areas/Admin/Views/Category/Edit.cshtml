@@ -1,0 +1,133 @@
+﻿@model Blog.Models.BlogCategory
+@{
+    ViewBag.Title = "Add";
+
+}
+@section Style{
+    <style>
+        .displaynonne {
+            display: none;
+        }
+    </style>
+}
+<div style="padding:10px">
+    <fieldset class="layui-elem-field">
+        <legend>编辑栏目</legend>
+        <div class="layui-field-box">
+            <form class="layui-form layui-form-pane">
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model=>model.CreateTime)
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Pid, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        <select id="Pid" name="Pid"><option value="0">顶级栏目</option></select>
+                    </div>
+
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.CategoryType, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.DropDownListFor(model => model.CategoryType, Html.GetEnumSelectList(typeof(Blog.Models.Enum.BlogCategoryType)), new { lay_filter = "test" , disabled= "disabled" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Name, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.TextBoxFor(model => model.Name, new { @class = "layui-input", lay_verify = "required" })
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Sort, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+
+                        @Html.TextBoxFor(model => model.Sort, new { @class = "layui-input", lay_verify = "required|number" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                       
+                        <img src="@(string.IsNullOrEmpty(Model.ImgUrl)?"/images/NotPic.jpg":Model.ImgUrl)" id="img" style="border:1px solid #808080" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.ImgUrl, new { @class = "layui-form-label" })
+
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn" id="upImg">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                        @Html.HiddenFor(model => model.ImgUrl, new { @class = "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    @Html.LabelFor(model => model.BodyContent, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+
+                        @Html.TextAreaFor(model => model.BodyContent, new { @class = "layui-textarea" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.IsNav, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.CheckBoxFor(model => model.IsNav, new { lay_skin = "switch", lay_text = "是|否" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Enable, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.CheckBoxFor(model => model.Enable, new { lay_skin = "switch", lay_text = "启用|禁用" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Meta_Keywords, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+
+                        @Html.TextBoxFor(model => model.Meta_Keywords, new { @class = "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Meta_Description, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+
+                        @Html.TextBoxFor(model => model.Meta_Description, new { @class = "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.LinkUrl, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.TextBoxFor(model => model.LinkUrl, new { @class = "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    @Html.LabelFor(model => model.Remark, new { @class = "layui-form-label" })
+                    <div class="layui-input-block">
+                        @Html.TextBoxFor(model => model.Remark, new { @class = "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                    </label>
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="*">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+
+</div>
+
+@section Scripts{
+    <script>
+            var selectId = @Model.Pid;
+            var categoryType = {
+                 General:@((int)Blog.Models.Enum.BlogCategoryType.General),
+                 Page:@((int)Blog.Models.Enum.BlogCategoryType.Page),
+                 Link: @((int)Blog.Models.Enum.BlogCategoryType.Link),
+            };
+    </script>
+    <script src="~/js/admin/category/edit.js"></script>
+}

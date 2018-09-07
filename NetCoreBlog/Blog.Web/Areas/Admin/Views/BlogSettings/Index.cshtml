@@ -1,0 +1,143 @@
+﻿@model Blog.Web.Models.BlogSettingsViewModel
+@{
+    ViewBag.Title = "Index";
+}
+@section Style{
+    <style>
+        .layui-upload-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 38px;
+            line-height: 38px;
+            cursor: pointer;
+        }
+        .layui-form-item .input-custom-width {
+            width: 300px;
+        }
+    </style>
+}
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+    <legend>相关设置</legend>
+</fieldset>
+
+<form class="layui-form layui-form-pane">
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this" >站点设置</li>
+
+            <li>SEO设置</li>
+            <li>QQ登陆设置</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label  class="layui-form-label">站点标题</label>
+                    <div class="layui-input-inline input-custom-width">
+                         @Html.TextBoxFor(model => model.Title, new {@class="layui-input", placeholder = "请输入站点名称" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">站点名称，将显示在浏览器窗口标题等位置</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">站点副标题</label>
+                    <div class="layui-input-inline input-custom-width">
+                        @Html.TextBoxFor(model => model.Subtitle, new { @class = "layui-input", placeholder = "请输入站点副标题" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">站点副标题，将显示在about页面</div>
+                </div>
+                
+                <div class="layui-form-item">
+                    <label class="layui-form-label">文字LOGO</label>
+                    <div class="layui-input-inline input-custom-width">
+
+                        @Html.TextBoxFor(model => model.LogoText, new { @class = "layui-input", placeholder = "请输入文字" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">显示在网站导航栏上面的文字logo</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">站点logo</label>
+                    <div class="layui-input-inline input-custom-width">
+                        @Html.TextBoxFor(model => model.Logo, new {@class="layui-input" })
+                    </div>
+                    <div style="float:left">
+                        <img id="img" class="layui-circle" src="@(string.IsNullOrEmpty(Model.Logo)?"":Model.Logo)" />
+                    </div>
+                    <div style="float:left">
+                        <button type="button" class="layui-btn" style="float:right" id="upImg">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                    </div>
+                    
+                    <div class="layui-form-mid layui-word-aux"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">站点url</label>
+                    <div class="layui-input-inline input-custom-width">
+                        @Html.TextBoxFor(model => model.Url, new { @class = "layui-input", placeholder = "请输入站点url" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux"></div>
+                </div>
+                <div class="layui-form-item layui-form-text" style="width:800px">
+                    <label class="layui-form-label">博客简介</label>
+                    <div class="layui-input-block ">
+
+                        @Html.TextAreaFor(model => model.Abstract, new { placeholder = "请输入简介", @class = "layui-textarea" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">博客简介</div>
+                </div>
+            </div>
+     
+            <div class="layui-tab-item">
+          
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站关键词</label>
+                    <div class="layui-input-inline input-custom-width">
+                        @Html.TextBoxFor(model => model.Keywords, new { placeholder = "请输关键词", @class = "layui-input" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">网站的关键词，合理布置关键词有利于排名提升(多个关键词用逗号隔开)</div>
+                </div>
+                <div class="layui-form-item layui-form-text" style="width:800px">
+                    <label class="layui-form-label">网站描述</label>
+                    <div class="layui-input-block">
+       
+                        @Html.TextAreaFor(model => model.Description, new { placeholder = "请输入内容", @class = "layui-textarea" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">网站的描述，合理在描述中插入关键词有利于排名提升</div>
+                </div>
+                <div class="layui-form-item layui-form-text" style="width:800px">
+                    <label class="layui-form-label">第三方统计代码</label>
+                    <div class="layui-input-block ">
+
+                        @Html.TextAreaFor(model => model.Statistics, new { placeholder = "请输入内容", @class = "layui-textarea" })
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">第三方统计代码</div>
+                </div>
+            </div>
+            <div class="layui-tab-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">APP ID</label>
+                    <div class="layui-input-inline input-custom-width">
+          
+                        @Html.TextBoxFor(model=>model.QQAppId,new { @class= "layui-input" })
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">APP Key</label>
+                    <div class="layui-input-inline input-custom-width">
+                        @Html.TextBoxFor(model => model.QQAppKey, new { @class = "layui-input" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div style="padding-left:15px">
+            <button lay-submit lay-filter="*" class="layui-btn">
+                提交保存
+            </button>
+        </div>
+    </div>
+   
+</form>
+@section Scripts{
+    <script src="~/js/admin/blogsettings/index.js"></script>
+}

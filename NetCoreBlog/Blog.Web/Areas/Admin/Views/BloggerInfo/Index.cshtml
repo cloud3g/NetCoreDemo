@@ -1,0 +1,97 @@
+﻿@model Blog.Web.Models.BloggerInfoViewModel
+@{
+    ViewBag.Title = "Index";
+}
+@section style{
+    <style>
+        form input.layui-input[disabled]{ background:#f2f2f2; color:#595963!important; }
+.user_left{ width:45%; float: left; margin:20px 0 0 5%; }
+.user_right{ width:25%; float: left; margin:20px 0 0 5%; text-align: center; }
+.user_right p{ margin:10px 0 25px; font-size: 12px; text-align: center; color: #FF5722;}
+.user_right img#userFace{ width:200px; height:200px; }
+.layui-table,.layui-table th{ text-align:center; }
+.userAddress.layui-form-item .layui-input-inline{ width:23%; }
+.userAddress.layui-form-item .layui-input-inline:last-child{ margin-right:0; }
+#page{ text-align:right; }
+
+
+.changePwd{ width:30%; margin:3% 0 0 5%; }
+
+
+
+@@media screen and (max-width:1050px){
+
+	.user_left,.user_right,.changePwd{ width:100%; float:none; margin-left: 0; }
+	.user_right{ margin-bottom: 20px; }
+}
+@@media screen and (max-width:450px){
+	.userAddress.layui-form-item .layui-input-inline{ width:auto; }
+}
+    </style>
+}
+<form class="layui-form">
+    <div class="user_left">
+        <div class="layui-form-item">
+            <label class="layui-form-label">博主名字</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Name, new { @class = "layui-input" })
+            </div>
+        </div>
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Address, new { @class = "layui-input" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">QQ</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.QQ, new { @class = "layui-input" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Email, new { @class = "layui-input" })
+            </div>
+        </div>
+        <div class="layui-form-item userAddress">
+            <label class="layui-form-label">微博</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Weibo, new { @class = "layui-input" })
+            </div>
+        </div>
+      
+        <div class="layui-form-item">
+            <label class="layui-form-label">Git</label>
+            <div class="layui-input-block">
+                @Html.TextBoxFor(model => model.Git, new { @class = "layui-input" })
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">介绍</label>
+            <div class="layui-input-block">
+                @Html.TextAreaFor(model=>model.Introduction,new {@class="layui-textarea" })
+            </div>
+        </div>
+    </div>
+    <div class="user_right">
+        <div style="padding-bottom:10px">
+            <button type="button" id="upImg" class="layui-btn layui-btn-primary layui-btn-small">
+                <i class="layui-icon ">&#xe654;换个头像</i>
+            </button>
+        </div>
+        <img id="img" src="@Model.Icon" class="layui-circle" >
+        @Html.HiddenFor(model => model.Icon)
+    </div>
+    <div class="layui-form-item" style="margin-left: 5%;">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="changeUser">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+ @section Scripts{
+     <script src="~/js/admin/bloggerinfo/index.js"></script>
+ }

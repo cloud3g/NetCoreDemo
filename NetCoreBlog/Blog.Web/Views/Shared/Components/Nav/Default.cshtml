@@ -1,0 +1,9 @@
+﻿@model List<Blog.Models.BlogCategory>
+<div class="article-category shadow">
+    <div class="article-category-title">分类导航</div>
+    @foreach (var item in Model)
+    {
+        <a href="/article/category/@item.Id">@item.Name</a>
+    }
+    <div class="clear"></div>
+</div>

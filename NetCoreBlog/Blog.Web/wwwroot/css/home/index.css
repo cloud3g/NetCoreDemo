@@ -1,0 +1,91 @@
+﻿.blog-banner {
+    background: #fff;
+    padding: 15px 15px;
+    text-align: center;
+    margin-top: 79px
+}
+
+    .blog-banner li {
+        padding: 10px 0;
+        font-size: 28px;
+        font-family: KaiTi;
+        color: #f2f2f2;
+        text-shadow: 0 0 8px #009688,0 0 8px #009688,0 0 8px #009688
+    }
+
+.blogroll > li {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 2px 5px
+}
+
+.footprint > dt {
+    color: #01AAED
+}
+
+.footprint > dd {
+    text-indent: 1.3em;
+    padding: 2px 0
+}
+
+.blogerinfo {
+    text-align: center;
+    padding: 0 15px;
+    background: #fff;
+    margin-bottom: 15px
+}
+
+.blogerinfo-figure {
+    display: inline-block;
+    margin: 20px auto
+}
+
+    .blogerinfo-figure img {
+        border-radius: 50px
+    }
+
+.blogerinfo-nickname {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 15px 0
+}
+
+.blogerinfo-introduce {
+    margin: 15px auto;
+    font-size: 18px;
+    width: 90%
+}
+
+.blogerinfo-location {
+    color: grey;
+    margin: 15px
+}
+
+.blogerinfo-contact {
+    padding: 15px;
+    padding-top: 5px
+}
+
+    .blogerinfo-contact > a {
+        padding: 0 10px
+    }
+.home-tips-container>span>a{
+    color:lightskyblue
+}
+
+@media (min-width:768px) {
+    .blog-banner li {
+        font-size: 38px
+    }
+}
+
+@media (min-width:992px) {
+    .blog-banner li {
+        font-size: 46px
+    }
+}
+@media (min-width:1200px) {
+    .blog-banner li {
+        font-size: 52px
+    }
+}

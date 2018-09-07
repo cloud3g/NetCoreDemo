@@ -1,0 +1,66 @@
+﻿@model Blog.Models.WC_MessageResponse
+
+<div style="padding:20px">
+    <form class="layui-form " id="textForm">
+        @Html.HiddenFor(model=>model.Id)
+        @Html.HiddenFor(model=>model.OfficalAccountId)
+        @Html.HiddenFor(model => model.CreateTime)
+        @Html.HiddenFor(model => model.UpdateTime)
+        @Html.HiddenFor(model => model.Enable)
+     
+        <input type="hidden" value="@Model.MessageRule" id="MessageRule" name="MessageRule" />
+        <input type="hidden" value="@Model.Category" id="Category" name="Category" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">关键词</label>
+            <div class="layui-input-block">
+                <input name="MatchKey" value="@Model.MatchKey" required  class="layui-input" />
+            </div>
+        </div>
+     
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block layui-form-text">
+                <textarea name="TextContent" class="layui-textarea">@Model.TextContent</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input name="Sort" value="@Model.Sort" required class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+            </label>
+            <div class="layui-input-block">
+                <button lay-submit class='layui-btn layui-btn-primary' lay-filter='btnTextContentSave'>提交保存</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+ <script type="text/javascript">
+     layui.use(['form', 'upload','jquery'], function () {
+         var form = layui.form, upload = layui.upload, $ = layui.$;
+         form.on("submit(btnTextContentSave)", function (data) {
+             $.ajax({
+                 url: '/admin/messageresponse/edit',
+                 data: $('#textForm').serialize(),
+                 type: 'post',
+                 success: function (res) {
+                     layer.closeAll("page");
+                     getTextContent(defaultImagePageIndex, defaultImagePageSize, Category.Text);
+                 },
+                 error: function (e) {
+                     layer.msg(e.responseText);
+                 }
+
+             });
+             return false;
+         })
+        
+         
+     })
+ </script>

@@ -1,0 +1,16 @@
+﻿@model BloggerInfoViewModel
+<div class="blogerinfo shadow">
+    <div class="blogerinfo-figure">
+        <img class="layui-circle" style="width:100px;height:100px" src="@Model.Icon" alt="@Model.Name">
+    </div>
+    <p class="blogerinfo-nickname">@Model.Name</p>
+    <p class="blogerinfo-introduce">@Model.Introduction</p>
+    <p class="blogerinfo-location"><i class="fa fa-location-arrow"></i>&nbsp;@Model.Address</p>
+    <hr>
+    <div class="blogerinfo-contact">
+        <a target="_blank" title="QQ交流" href="@Model.QQ"><i class="fa fa-qq fa-2x"></i></a>
+        <a target="_blank" title="给我写信" href="@Model.Email"><i class="fa fa-envelope fa-2x"></i></a>
+        <a target="_blank" title="新浪微博" href="@Model.Weibo"><i class="fa fa-weibo fa-2x"></i></a>
+        <a target="_blank" title="码云" href="@Model.Git"><i class="fa fa-git fa-2x"></i></a>
+    </div>
+</div>

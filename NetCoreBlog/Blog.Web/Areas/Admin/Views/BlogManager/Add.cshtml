@@ -1,0 +1,78 @@
+﻿@model Blog.Models.BlogArticle
+@section Styles{
+   <style>
+       .layui-layedit > img{
+           width:50%;
+       }
+    </style>
+}
+<form class="layui-form " id="articleForm" style="text-align:left">
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.Title, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextBoxFor(model => model.Title, new { @class = "layui-input", lay_verify = "required" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        @Html.Label("categoryName", "类别", new { @class = "layui-form-label" })
+        <div class="layui-input-inline">
+            @Html.DropDownListFor(model => model.CategoryId, ViewBag.categoryList as List<SelectListItem>, new { lay_filter = "rootCategory" })
+            @Html.HiddenFor(model => model.CategoryName)
+        </div>
+        <div class="layui-input-inline">
+            <select id="childCategory" name="childCategory"></select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        @Html.LabelFor(model => model.Content, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+            @Html.TextAreaFor(model => model.Content)
+        </div>
+    </div>
+  
+    <div class="layui-form-item" style="position:relative;">
+        <label class="layui-form-label">封面</label>
+        @Html.HiddenFor(model => model.ImgUrl)
+        <div class="layui-input-inline">
+            <img id="img" style="width:100%;height:auto;border:1px solid #ddd" src="~/images/cover_default.jpg" />
+        </div>
+        <div class="layui-input-inline"style="position:absolute;bottom:0;" >
+            <div >
+                <button type="button" id="upImg" class="layui-btn layui-btn-primary">
+                    <i class="layui-icon">&#xe608;</i>点击上传
+                </button>
+            </div>
+            
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+
+    </div>
+    <div class="layui-form-item">
+        @Html.LabelFor(model => model.Remark, new { @class = "layui-form-label" })
+        <div class="layui-input-block">
+
+            @Html.TextBoxFor(model => model.Remark, new { @class = "layui-input" })
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">
+        </label>
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit="" lay-filter="btnSubmit">立即提交</button>
+            <button type="button" id="listBack" lay-filter="listBack" class="layui-btn layui-btn-primary">返回列表</button>
+        </div>
+
+    </div>
+</form>
+
+
+<script>
+            var categoryType = {
+                 General:@((int)Blog.Models.Enum.BlogCategoryType.General),
+                 Page:@((int)Blog.Models.Enum.BlogCategoryType.Page),
+                 Link: @((int)Blog.Models.Enum.BlogCategoryType.Link),
+            };
+</script>
+<script src="~/js/admin/blogmanager/add.js"></script>

@@ -1,0 +1,31 @@
+﻿<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">内容</label>
+        <div class="layui-input-block">
+            <textarea name="Content" id="announcementContent" lay-verify="announcementContent" style="display: none;"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公告级别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="Level" value="0" title="普通" checked>
+            <input type="radio" name="Level" value="1" title="一般">
+            <input type="radio" name="Level" value="2" title="重要">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">启用</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="Enable" lay-skin="switch" lay-text="ON|OFF" value="true" checked>
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formAnnouncement">立即提交</button>
+        </div>
+    </div>
+</form>
+@section Scripts{
+<script src="~/js/admin/announcement/add.js"></script>
+}

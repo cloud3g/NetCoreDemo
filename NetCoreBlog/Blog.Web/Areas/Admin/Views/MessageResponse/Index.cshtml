@@ -1,0 +1,903 @@
+﻿@using Blog.Models;
+@{
+    ViewBag.Title = "Index";
+}
+@section Style{
+    <style>
+        .layui-table th{
+            text-align:center;
+        }
+    </style>
+}
+
+<div style="text-align:center">
+   
+   
+    <fieldset id="List" class="layui-elem-field layui-field-title sys-list-field">
+        <legend id="BoxTitle">公众号【@ViewBag.defaultOfficealName】内容回复设置</legend>
+        <div class="layui-field-box">
+            <div id="content" class="layui-form">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">默认回复</li>
+                        <li>关注回复</li>
+                        <li>文本回复</li>
+                        <li>图片回复</li>
+ 
+                    </ul>
+                    <div class="layui-tab-content"></div>
+                </div>
+
+               
+            </div>
+
+        </div>
+    </fieldset>
+</div>
+
+@section Scripts{
+
+    @*<script src="~/js/admin/officialaccounts/index.js"></script>*@
+
+    <script>
+        var defaultImagePageIndex = 1;
+        var defaultImagePageSize =8;
+
+        var subscriberImagePageIndex = 1;
+        var subscriberImagePageSize = 8;
+
+        var textPageIndex = 1;
+        var textPageSize = 1;
+
+
+        var matchKeyPageIndex = 1;
+        var matchKeyPageSize = 8;
+
+
+        var matchKeyContentPageIndex = 1;
+        var matchKeyContentPageSize = 8;
+
+        var currentMatchKey = "";
+
+        var imagePageIndex = 1;
+        var imagePageSize = 8;
+
+
+
+        var defaultCategory =@ViewBag.defaultCategory;
+        var subscriberCategory =@ViewBag.subscriberCategory
+        var defaultOfficealId= @ViewBag.defaultOfficealId;
+        //1文本2图文3语音
+        var Category = {
+            Text: @((int)WeChatReplyCategory.Text),
+            Image: @((int)WeChatReplyCategory.Image),
+            Voice: @((int)WeChatReplyCategory.Voice),
+            Equal:  @((int)WeChatReplyCategory.Equal),
+            Contain:  @((int)WeChatReplyCategory.Contain),
+        };
+        var WeChatRequestRuleEnum = {
+            Default:@((int)WeChatRequestRuleEnum.Default),
+            Image:@((int)WeChatRequestRuleEnum.Image),
+            Subscriber:@((int)WeChatRequestRuleEnum.Subscriber),
+            Text:@((int)WeChatRequestRuleEnum.Text),
+            Voice:@((int)WeChatRequestRuleEnum.Voice),
+        };
+
+        layui.use(['element', 'form','laypage'], function () {
+            var element = layui.element, form = layui.form,$=layui.$;
+
+       
+            //一些事件监听
+            element.on('tab(docDemoTabBrief)', function (data) {
+               
+                getTabContent($(this).html())
+            });
+           
+            //默认回复
+            form.on("checkbox(cbDefault)", function (data){
+                var value = data.elem.checked;
+                var type = $(data.elem).attr('data-type');
+                if (!value) {
+                    
+                    $('#defaultContent').html("");
+                } else {
+                    $(":input[lay-filter=cbDefault]").attr("checked", false);
+                    data.elem.checked = value;
+                    getDefaultContent(type);
+                }
+                form.render();
+            })
+            //关注回复
+            form.on("checkbox(cbSubscriber)", function (data) {
+                var value = data.elem.checked;
+                var type = $(data.elem).attr('data-type');
+                if (!value) {
+
+                    $('#defaultContent').html("");
+                } else {
+                    $(":input[lay-filter=cbSubscriber]").attr("checked", false);
+                    data.elem.checked = value;
+                    getSubscriberContent(type);
+                }
+                form.render();
+            })
+            getTabContent($(".layui-this").html());
+            //默认回复文本保存
+            form.on("submit(btnDefaultTextSave)", function (data) { 
+                $.ajax({
+                    url: '/admin/messageresponse/PostData',
+                    type: 'post',
+                    data: $('#textForm').serialize(),
+                    success: function (res) {
+                        if (res) {
+                            layer.msg("保存成功！");
+                        }
+
+                    },
+                    error: function (e) {
+                        layer.msg(e.responseText);
+                    }
+
+                })
+                return false;
+            })
+           //默认回复图文保存
+            form.on('submit(btnDefaultImgSave)', function (data) {
+                if ($('#ImgTextUrl').val() == "") {
+                    layer.msg("请上传图片！");
+                    return false;
+                }
+                $('#MessageRule').val(WeChatRequestRuleEnum.Default);
+                $('#Category').val(Category.Image);
+                $.ajax({
+                    url: '/admin/messageresponse/PostData',
+                    type: 'post',
+                    data: $('#imgeForm').serialize(),
+                    success: function (res) {
+                        layer.closeAll();
+                        getDefaultImageContent(defaultImagePageIndex, defaultImagePageSize, Category.Image);
+                    },
+                    error: function (e) {
+                        layer.msg(e.responseText);
+                    }
+
+                })
+                return false;
+            })
+            //关注回复图文保存
+            form.on('submit(btnSubscriberImgSave)', function (data) {
+                if ($('#ImgTextUrl').val() == "") {
+                    layer.msg("请上传图片！");
+                    return false;
+                }
+                $('#MessageRule').val(WeChatRequestRuleEnum.Subscriber);
+                $('#Category').val(Category.Image);
+                $.ajax({
+                    url: '/admin/messageresponse/PostData',
+                    type: 'post',
+                    data: $('#imgeForm').serialize(),
+                    success: function (res) {
+                        layer.closeAll();
+                        getSubscriberImageContent(subscriberImagePageIndex, subscriberImagePageSize, Category.Image);
+                    },
+                    error: function (e) {
+                        layer.msg(e.responseText);
+                    }
+
+                })
+                return false;
+            })
+            //编辑
+            form.on('submit(btnImgContentSave)', function (data) { 
+                var type = $('#type').val();
+     
+                $.ajax({
+                    url: '/admin/messageresponse/edit',
+                    type: 'post',
+                    data: $('#imgeForm').serialize(),
+                    success: function (res) {
+                        layer.closeAll();
+                        if (type == WeChatRequestRuleEnum.Default) {
+
+                            getDefaultImageContent(defaultImagePageIndex, defaultImagePageSize, Category.Image);
+                        }
+                        if (type == WeChatRequestRuleEnum.Subscriber) {
+
+                            getSubscriberImageContent(subscriberImagePageIndex, subscriberImagePageSize, Category.Image);
+                        }
+                        
+                    },
+                    error: function (e) {
+                        layer.msg(e.responseText);
+                    }
+
+                })
+                return false;
+            })
+
+     
+        });
+
+        function getTabContent(type) {
+            $(".layui-tab-content").html("");
+            switch (type) {
+                case "默认回复": getDefault(); break;
+                case "关注回复": getSubscriber(); break;
+                case "文本回复": getText(); break;
+                case "图片回复": getImage(); break;
+                case "语音回复": getVoice(); break;
+            }
+
+        }
+        function getDefault() {
+            var $ = layui.$, form = layui.form;
+            var html = '<div><input type="checkbox" name="" ' + checkDefault(defaultCategory == Category.Text) + ' lay-filter="cbDefault" data-type="' + Category.Text + '" title="文本" > <input lay-filter="cbDefault" type="checkbox" name="" ' + checkDefault(defaultCategory == Category.Image) + ' title="图文" data-type="' + Category.Image + '" >  <div style="padding-top:10px"><blockquote id="defaultBlock" class="layui-elem-quote layui-quote-nm"></blockquote></div><div id="defaultContent"></div></div>';;
+            $(".layui-tab-content").html(html);
+            getDefaultContent(defaultCategory);
+            form.render();
+           
+        }
+        function getDefaultContent(type) {
+            if (type == Category.Text) {
+
+                getDefaultTextContent();
+            } else if (type == Category.Image) {
+
+                getDefaultImageContent(defaultImagePageIndex, defaultImagePageSize, Category.Image)
+            }
+
+        }
+        function getDefaultTextContent() {
+        
+            var $ = layui.$, layer = layui.layer;
+            var index=  layer.load(1);
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: Category.Text, RequestRule: WeChatRequestRuleEnum.Default, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+                    layer.close(index);
+                  
+                    $('#defaultBlock').html("<button lay-submit lay-filter='btnDefaultTextSave' class='layui-btn layui-btn-primary'>提交保存</button>");
+                    if (res != null) {
+                        $('#defaultContent').html("<form id='textForm' class='layui- form'><input type='hidden' name='Id' value='" + res.Id + "' /><input type='hidden' name='MessageRule' value='" + WeChatRequestRuleEnum.Default + "' /><input type='hidden' name='Category' value='" + Category.Text + "' /><textarea name='TextContent' rows='25' cols='100'>" + res.TextContent + "</textarea></form>");
+                    } else {
+                        $('#defaultContent').html("<form id='textForm' class='layui- form'> <input type='hidden' name='MessageRule' value='" + WeChatRequestRuleEnum.Default + "' /><input type='hidden' name='Category' value='" + Category.Text + "' /><textarea name='TextContent' rows='25' cols='100'></textarea></form>");
+
+                    }
+                 
+                }
+            });
+        }
+        function getDefaultImageContent(pageindex, pagesize, type) {
+            
+            var $ = layui.$, layer = layui.layer, laypage = layui.laypage, form = layui.form;
+            var index = layer.load(1);
+            //Category.Image
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: type, page: pageindex, rows: pagesize, RequestRule: WeChatRequestRuleEnum.Default, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+                   
+                    layer.close(index);
+                    $('#defaultBlock').html("<button onclick='addDefaultImageContent()' class='layui-btn layui-btn-primary'>添加回复</button> <button onclick='setDefaultImageDefault(" + WeChatRequestRuleEnum.Default+")' class='layui-btn layui-btn-primary'>设置默认</button>");
+                    var dataHtml = '';
+                    dataHtml += '<table style="" class="layui-table" lay-even>';
+                    dataHtml += '<thead><tr><th>标题</th><th>图片</th><th>超链接</th><th>内容</th><th colspan="2">操作</th></tr></thead>';
+                    dataHtml += '<tbody>';
+                    if (res) {
+                        if (res.list.length != 0) {
+                            $.each(res.list, function (index, value) {
+                                dataHtml += '<tr>'
+                                    + '<td align="left">' + value.TextContent + '</td>'
+                                    + '<td><img   style="width:100%;height:auto;border:1px solid #ddd" src="' + value.ImgTextUrl+'" /></td>'
+                                    + '<td>' + value.ImgTextLink + '</td>'
+                                    + '<td>' + value.ImgTextContext + '</td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-normal" onclick="edit(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Default + ')"><i class="layui-icon">&#xe642;</i></button></td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-danger" onclick="del(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Default + ')"><i class="layui-icon">&#xe640;</i></button></td>';
+                                dataHtml + '</tr>';
+                            })
+
+                        } else {
+                            dataHtml += '<tr><td align="center" colspan="6">暂无数据</td></tr>';
+
+                        }
+
+                    } else {
+
+                        dataHtml += '<tr><td align="center" colspan="6">暂无数据</td></tr>';
+                    }
+                    dataHtml += '</tbody>';
+                    dataHtml += '</table>';
+                    dataHtml += '<div id="page"></div>';
+                    $('#defaultContent').html(dataHtml);
+                    laypage.render({
+                        elem: 'page'
+                        , count: res.count
+                        , limit: defaultImagePageSize
+                        , curr: defaultImagePageIndex
+                        , limits: [8, 20, 30, 40, 50]
+                        , layout: ['prev', 'page', 'next', 'count', 'limit', 'skip']
+                        , jump: function (obj, first) {
+                            if (!first) {
+                                defaultImagePageIndex = obj.curr;
+                                defaultImagePageSize = obj.limit;
+                                getDefaultImageContent(obj.curr, obj.limit, Category.Image);
+                            }
+                        }
+                    });
+                    form.render();
+                }
+            });
+
+        }
+        function addDefaultImageContent() {
+            var layer = layui.layer, $ = layui.$;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/MessageResponse/AddDefaultImageContent',
+                type: 'get',
+                success: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        type: 1,
+                        title:'添加回复',
+                        content: res,
+                        area: ['600px']
+
+                    });
+
+                },
+                error: function (e) {
+                    layer.close(index);
+                    layer.msg(e.responseText);
+                }
+
+            });
+            
+        }
+        function setDefaultImageDefault(type) {
+            $.ajax({
+                url:'/admin/MessageResponse/setdefault',
+                type: 'post',
+                data: { officealId: defaultOfficealId, category: Category.Image, request:type },
+                success: function (res) {
+                    if (res) {
+                        layer.msg("设置成功!");
+
+                    } else {
+                        layer.msg("设置失败!")
+                    }
+
+                }
+            })
+
+        }
+
+        function getSubscriber() {
+
+            var $ = layui.$, form = layui.form;
+            var html = '<div><input type="checkbox" name="" ' + checkDefault(subscriberCategory == Category.Text) + ' lay-filter="cbSubscriber" data-type="' + Category.Text + '" title="文本" > <input lay-filter="cbSubscriber" type="checkbox" name="" ' + checkDefault(subscriberCategory == Category.Image) + ' title="图文" data-type="' + Category.Image + '" >  <div style="padding-top:10px"><blockquote id="defaultBlock" class="layui-elem-quote layui-quote-nm"></blockquote></div><div id="defaultContent"></div></div>';;
+            $(".layui-tab-content").html(html);
+            getSubscriberContent(subscriberCategory);
+            form.render();
+        }
+        function getSubscriberContent(type) {
+           
+            if (type == Category.Text) {
+
+                getSubscriberTextContent();
+            } else if (type == Category.Image) {
+
+                getSubscriberImageContent(subscriberImagePageIndex, subscriberImagePageSize, Category.Image)
+            }
+
+        }
+        function getSubscriberTextContent() {
+           
+            var $ = layui.$, layer = layui.layer;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: Category.Text, RequestRule: WeChatRequestRuleEnum.Subscriber, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+                    layer.close(index);
+
+                    $('#defaultBlock').html("<button lay-submit lay-filter='btnDefaultTextSave' class='layui-btn layui-btn-primary'>提交保存</button>");
+                    if (res != null) {
+                        $('#defaultContent').html("<form id='textForm' class='layui- form'><input type='hidden' name='Id' value='" + res.Id + "' /><input type='hidden' name='MessageRule' value='" + WeChatRequestRuleEnum.Subscriber + "' /><input type='hidden' name='Category' value='" + Category.Text + "' /><textarea name='TextContent' rows='25' cols='100'>" + res.TextContent + "</textarea></form>");
+                    } else {
+                        $('#defaultContent').html("<form id='textForm' class='layui- form'> <input type='hidden' name='Category' value='" + Category.Text + "' /><input type='hidden' name='MessageRule' value='" + WeChatRequestRuleEnum.Subscriber + "' /><textarea name='TextContent' rows='25' cols='100'></textarea></form>");
+
+                    }
+
+                }
+            });
+        }
+        function getSubscriberImageContent(pageindex, pagesize, type) {
+
+            var $ = layui.$, layer = layui.layer, laypage = layui.laypage, form = layui.form;
+            var index = layer.load(1);
+            //Category.Image
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: type, page: pageindex, rows: pagesize, RequestRule: WeChatRequestRuleEnum.Subscriber, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+
+                    layer.close(index);
+                    $('#defaultBlock').html("<button onclick='addSubscriberImageContent()' class='layui-btn layui-btn-primary'>添加回复</button> <button onclick='setDefaultImageDefault(" + WeChatRequestRuleEnum.Subscriber + ")' class='layui-btn layui-btn-primary'>设置默认</button>");
+                    var dataHtml = '';
+                    dataHtml += '<table style="" class="layui-table" lay-even>';
+                    dataHtml += '<thead><tr><th>标题</th><th>图片</th><th>超链接</th><th>内容</th><th colspan="2">操作</th></tr></thead>';
+                    dataHtml += '<tbody>';
+                    if (res) {
+                        if (res.list.length != 0) {
+                            $.each(res.list, function (index, value) {
+                                dataHtml += '<tr>'
+                                    + '<td align="left">' + value.TextContent + '</td>'
+                                    + '<td><img   style="width:100%;height:auto;border:1px solid #ddd" src="' + value.ImgTextUrl +'" /></td>'
+                                    + '<td>' + value.ImgTextLink + '</td>'
+                                    + '<td>' + value.ImgTextContext + '</td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-normal" onclick="edit(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Subscriber + ')"><i class="layui-icon">&#xe642;</i></button></td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-danger" onclick="del(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Subscriber + ')"><i class="layui-icon">&#xe640;</i></button></td>';
+                                dataHtml + '</tr>';
+                            })
+
+                        } else {
+                            dataHtml += '<tr><td align="center" colspan="6">暂无数据</td></tr>';
+
+                        }
+
+                    } else {
+
+                        dataHtml += '<tr><td align="center" colspan="6">暂无数据</td></tr>';
+                    }
+                    dataHtml += '</tbody>';
+                    dataHtml += '</table>';
+                    dataHtml += '<div id="page"></div>';
+                    $('#defaultContent').html(dataHtml);
+                    laypage.render({
+                        elem: 'page'
+                        , count: res.count
+                        , limit: subscriberImagePageSize
+                        , curr: subscriberImagePageIndex
+                        , limits: [8, 20, 30, 40, 50]
+                        , layout: ['prev', 'page', 'next', 'count', 'limit', 'skip']
+                        , jump: function (obj, first) {
+                            if (!first) {
+                                subscriberImagePageIndex = obj.curr;
+                                subscriberImagePageSize = obj.limit;
+                                getSubscriberImageContent(obj.curr, obj.limit, Category.Image);
+                            }
+                        }
+                    });
+                    form.render();
+                }
+            });
+
+        }
+        function addSubscriberImageContent() {
+            var layer = layui.layer, $ = layui.$;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/MessageResponse/AddSubscriberImageContent',
+                type: 'get',
+                success: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        type: 1,
+                        title: '添加回复',
+                        content: res,
+                        area: ['600px']
+
+                    });
+
+                },
+                error: function (e) {
+                    layer.close(index);
+                    layer.msg(e.responseText);
+                }
+
+            });
+
+        }
+        function setSubscriberImageDefault() {
+            $.ajax({
+                url: '/admin/MessageResponse/setdefault',
+                type: 'post',
+                data: { officealId: defaultOfficealId, category: Category.Image, request: WeChatRequestRuleEnum.Default },
+                success: function (res) {
+                    if (res) {
+                        layer.msg("设置成功!");
+
+                    } else {
+                        layer.msg("设置失败!")
+                    }
+
+                }
+            })
+
+        }
+        function addSubscriberImageContent() {
+            var layer = layui.layer, $ = layui.$;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/MessageResponse/AddSubscriberImageContent',
+                type: 'get',
+                success: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        type: 1,
+                        title: '添加回复',
+                        content: res,
+                        area: ['600px']
+
+                    });
+
+                },
+                error: function (e) {
+                    layer.close(index);
+                    layer.msg(e.responseText);
+                }
+
+            });
+
+        }
+
+        function getText() {
+
+            var $ = layui.$, form = layui.form;
+            var html = '<div> <div style="padding-top:10px"><blockquote id="defaultBlock" class="layui-elem-quote layui-quote-nm"></blockquote></div><div id="defaultContent"></div></div>';
+            $(".layui-tab-content").html(html);
+            $('#defaultBlock').html("<button onclick='addTextContent()' class='layui-btn layui-btn-primary'>添加回复</button>");
+            getTextContent(textPageIndex, textPageSize, Category.Text)
+            form.render();
+        }
+        function getTextContent(pageindex, pagesize, type) {
+
+            var $ = layui.$, layer = layui.layer, laypage = layui.laypage, form = layui.form;
+            var index = layer.load(1);
+            //Category.Image
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: type, page: pageindex, rows: pagesize, RequestRule: WeChatRequestRuleEnum.Text, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+
+                    layer.close(index);  
+                    var dataHtml = '';
+                    dataHtml += '<table style="" class="layui-table" lay-even>';
+                    dataHtml += '<thead><tr><th>关键词</th><th>回复内容</th><th colspan="2">操作</th></tr></thead>';
+                    dataHtml += '<tbody>';
+                    if (res) {
+                        if (res.list.length != 0) {
+                            $.each(res.list, function (index, value) {
+                                dataHtml += '<tr>'
+                                    + '<td align="left">' + value.MatchKey + '</td>'
+                                    + '<td>' + value.TextContent + '</td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-normal" onclick="editText(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Text + ')"><i class="layui-icon">&#xe642;</i></button></td>';
+                                dataHtml += '<td><button class="layui-btn layui-btn-small layui-btn-danger" onclick="del(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Text + ')"><i class="layui-icon">&#xe640;</i></button></td>';
+                                dataHtml + '</tr>';
+                            })
+
+                        } else {
+                            dataHtml += '<tr><td align="center" colspan="4">暂无数据</td></tr>';
+
+                        }
+
+                    } else {
+
+                        dataHtml += '<tr><td align="center" colspan="4">暂无数据</td></tr>';
+                    }
+                    dataHtml += '</tbody>';
+                    dataHtml += '</table>';
+                    dataHtml += '<div id="page"></div>';
+                    $('#defaultContent').html(dataHtml);
+                    laypage.render({
+                        elem: 'page'
+                        , count: res.count
+                        , limit: textPageSize
+                        , curr: textPageIndex
+                        , limits: [8, 20, 30, 40, 50]
+                        , layout: ['prev', 'page', 'next', 'count', 'limit', 'skip']
+                        , jump: function (obj, first) {
+                            if (!first) {
+                                textPageIndex = obj.curr;
+                                textPageSize = obj.limit;
+                                getTextContent(obj.curr, obj.limit, Category.Text);
+                            }
+                        }
+                    });
+                    form.render();
+                }
+            });
+
+        }
+        function addTextContent() {
+            var html = "<div style='padding:20px'><form id='textForm' class='layui-form'><input type='hidden' name='OfficalAccountId' value='" + defaultOfficealId + "' /><input type='hidden' name='Category' value='" + Category.Text + "' /><input type='hidden' name='MessageRule' value='" + WeChatRequestRuleEnum.Text + "' /><div class='layui-form-item'><label class='layui-form-label'>关键词</label><div class='layui-input-block'><input type='text' class='layui-input' name='MatchKey' /></div></div><div class='layui-form-item layui-form-text'><label class='layui-form-label'>内容</label><div class='layui-input-block layui-form-text'><textarea  class='layui-textarea' name='TextContent'></textarea></div></div></form></div>";
+            layer.open({
+                type: 1,
+                area: ["500px"],
+                anim: 2,
+                title: "添加回复",
+                content: html,
+                btn: ['提交'],
+                yes: function (index, layero) {
+                    $.ajax({
+                        url: '/admin/messageresponse/PostData',
+                        type: 'post',
+                        data: $('#textForm').serialize(),
+                        success: function (res) {
+                            layer.closeAll();
+                            getTextContent(defaultImagePageIndex, defaultImagePageSize, Category.Text);
+                        },
+                        error: function (e) {
+                            layer.msg(e.responseText);
+                        }
+
+                    });
+                }
+            });
+
+        }
+        function editText(id) {
+            $.ajax({
+                url: '/admin/messageresponse/EditTextContent',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    layer.open({
+                        title: '修改回复',
+                        type: '1',
+                        area: ["500px"],
+                        content:res
+
+                    })
+                },
+                error: function (e) {
+                    layer.msg(e.responseText);
+                }
+            });
+
+        }
+
+        function getImage() {
+            var $ = layui.$, form = layui.form;
+            var html = '<div> <div style="padding-top:10px"><blockquote id="defaultBlock" class="layui-elem-quote layui-quote-nm"></blockquote></div><div id="defaultContent"><div  class="layui-row"><div class="layui-col-md3" id="matchKeyContent"></div><div id="imageContent" class="layui-col-md9"></div><div/></div></div>';
+            $(".layui-tab-content").html(html);
+            $('#defaultBlock').html("<button onclick='addImageContent()' class='layui-btn layui-btn-primary'>添加回复</button>");
+            getImageMatchKeyContent(defaultImagePageIndex, defaultImagePageSize, Category.Image)
+            getImageContent();
+            form.render();
+        }
+        function getImageMatchKeyContent(pageindex, pagesize,type) {
+            var $ = layui.$, layer = layui.layer, laypage = layui.laypage, form = layui.form;
+            var index = layer.load(1);
+            //Category.Image
+            $.ajax({
+                url: '/admin/messageResponse/GetListProperty',
+                type: 'post',
+                data: { type: type, page: pageindex, rows: pagesize, RequestRule: WeChatRequestRuleEnum.Image, defaultOfficealId: defaultOfficealId },
+                success: function (res) {
+
+                    layer.close(index);
+                    var dataHtml = '';
+                    dataHtml += '<table style="" class="layui-table" lay-even>';
+                    dataHtml += '<thead><tr><th>关键词</th></tr></thead>';
+                    dataHtml += '<tbody>';
+                    if (res) {
+                        if (res.list.length != 0) {
+                            $.each(res.list, function (index, value) {
+                                dataHtml += '<tr>'
+                                    + '<td onclick="getImageContent(\'' + matchKeyContentPageIndex + '\',\'' + matchKeyContentPageSize + '\',\'' + Category.Image + '\',\'' + value + '\')">' + value + '</td>'
+                                dataHtml + '</tr>';
+                            })
+
+                        } else {
+                            dataHtml += '<tr><td align="center" colspan="1">暂无数据</td></tr>';
+
+                        }
+
+                    } else {
+
+                        dataHtml += '<tr><td align="center" colspan="1">暂无数据</td></tr>';
+                    }
+                    dataHtml += '</tbody>';
+                    dataHtml += '</table>';
+                    dataHtml += '<div id="page"></div>';
+                    $('#matchKeyContent').html(dataHtml);
+                    laypage.render({
+                        elem: 'page'
+                        , count: res.count
+                        , limit: defaultImagePageSize
+                        , curr: defaultImagePageIndex
+    
+                        , layout: ['count','prev', 'page', 'next']
+                        , jump: function (obj, first) {
+                            if (!first) {
+                                defaultImagePageIndex = obj.curr;
+                                defaultImagePageSize = obj.limit;
+                                getDefaultImageContent(obj.curr, obj.limit, Category.Image);
+                            }
+                        }
+                    });
+                    form.render();
+                }
+            });
+
+        }
+        function getImageContent(pageindex, pagesize, type, matchKey) {
+          
+            var $ = layui.$, layer = layui.layer, laypage = layui.laypage, form = layui.form;
+            var index = layer.load(1);
+            currentMatchKey = matchKey;
+            //Category.Image
+            $.ajax({
+                url: '/admin/messageResponse/GetDefaultContent',
+                type: 'post',
+                data: { type: type, page: pageindex, rows: pagesize, RequestRule: WeChatRequestRuleEnum.Image, defaultOfficealId: defaultOfficealId, matchKey: matchKey},
+                success: function (res) {
+
+                    layer.close(index);
+                    var dataHtml = '';
+                    dataHtml += '<table style="" class="layui-table" lay-even>';
+                    dataHtml += '<thead><tr><th>标题</th><th>关键字</th><th>图片</th><th>超链接</th><th>回复内容</th><th colspan="2">操作</th></tr></thead>';
+                    dataHtml += '<tbody>';
+                    if (res) {
+                        if (res.list.length != 0) {
+                            $.each(res.list, function (index, value) {
+                                dataHtml += '<tr>'
+                                    + '<td>' + value.TextContent + '</td>'
+                                    + '<td>' + value.MatchKey + '</td>'
+                                    + '<td><img   style="width:100%;height:auto;border:1px solid #ddd" src="' + value.ImgTextUrl +'" /></td>'
+                                    + '<td>' + value.ImgTextLink + '</td>'
+                                    + '<td>' + value.ImgTextContext + '</td>'
+                                    + '<td><button class="layui-btn layui-btn-small layui-btn-normal" onclick="editImageContent(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Image + ')"><i class="layui-icon">&#xe642;</i></button></td>'
+                                    + '<td><button class="layui-btn layui-btn-small layui-btn-danger" onclick="del(\'' + value.Id + '\',' + WeChatRequestRuleEnum.Image + ')"><i class="layui-icon">&#xe640;</i></button></td>'
+                                dataHtml + '</tr>';
+                            })
+
+                        } else {
+                            dataHtml += '<tr><td align="center" colspan="7">暂无数据</td></tr>';
+
+                        }
+
+                    } else {
+
+                        dataHtml += '<tr><td align="center" colspan="7">暂无数据</td></tr>';
+                    }
+                    dataHtml += '</tbody>';
+                    dataHtml += '</table>';
+                    dataHtml += '<div id="page1"></div>';
+                    $('#imageContent').html(dataHtml);
+                    laypage.render({
+                        elem: 'page1'
+                        , count: res.count
+                        , limit: pagesize
+                        , curr: pageindex
+                        , layout: ['count', 'prev', 'page', 'next']
+                        , jump: function (obj, first) {
+                            if (!first) {
+                                matchKeyContentPageIndex = obj.curr;
+                                matchKeyContentPageSize = obj.limit;
+                                getImageContent(obj.curr, obj.limit, Category.Image, matchKey);
+                            }
+                        }
+                    });
+                    form.render();
+                }
+            });
+        }
+        function addImageContent() {
+            var layer = layui.layer, $ = layui.$;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/MessageResponse/AddImageContent',
+                type: 'get',
+                success: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        type: 1,
+                        title: '添加回复',
+                        content: res,
+                        area: ['600px']
+
+                    });
+
+                },
+                error: function (e) {
+                    layer.close(index);
+                    layer.msg(e.responseText);
+                }
+
+            });
+
+        }
+        function editImageContent(id) {
+            $.ajax({
+                url: '/admin/messageresponse/EditImage',
+                type: 'get',
+                data: { id: id },
+                success: function (res) {
+                    layer.open({
+                        title: '修改回复',
+                        type: '1',
+                        area: ["550px"],
+                        content: res
+
+                    })
+                },
+                error: function (e) {
+                    layer.msg(e.responseText);
+                }
+            });
+
+        }
+
+        function del(id,type) {
+            $.ajax({
+                url: '/admin/MessageResponse/Delete',
+                type: 'post',
+                data: { id: id },
+                success: function (res) {
+                    layer.msg(res.Message);
+                    if (type == WeChatRequestRuleEnum.Default) {
+
+                        getDefaultImageContent(defaultImagePageIndex, defaultImagePageSize, Category.Image);
+                    }
+                    if (type == WeChatRequestRuleEnum.Subscriber) {
+
+                        getSubscriberImageContent(defaultImagePageIndex, defaultImagePageSize, Category.Image);
+                    }
+                    if (type == WeChatRequestRuleEnum.Text) {
+
+                        getTextContent(defaultImagePageIndex, defaultImagePageSize, Category.Image);
+                    }
+                    if (type == WeChatRequestRuleEnum.Image) {
+                        getImageMatchKeyContent(matchKeyPageIndex, matchKeyPageSize, Category.Image);
+                        getImageContent(matchKeyContentPageIndex, matchKeyContentPageSize, Category.Image, currentMatchKey);
+                    }
+                },
+                error: function (e) {
+                    layer.msg(e.responseText);
+
+                }
+            });
+
+        }
+        function edit(id, type) {
+            var layer = layui.layer, $ = layui.$;
+            var index = layer.load(1);
+            $.ajax({
+                url: '/admin/MessageResponse/EditImageContent?id=' + id,
+                type: 'get',
+                success: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        type: 1,
+                        title: '编辑回复',
+                        content: res,
+                        area: ['600px']
+
+                    });
+
+                },
+                error: function (e) {
+                    layer.close(index);
+                    layer.msg(e.responseText);
+                }
+
+            });
+
+        }
+        function checkDefault(value) {
+            return value ? "checked" : "";
+        }
+        function clearForm(formName) {
+            $(':input', '#' + formName).not('#Category').val('');
+        }
+    </script>
+}
